@@ -1,0 +1,116 @@
+{
+    "name": "c-cpp-auto-pair",
+    "displayName": "C/C++ Auto Pair",
+    "publisher": "aydincpp",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/aydincpp/cpp-auto-pair.git"
+    },
+    "icon": "media/logo.png",
+    "description": "Streamline your C and C++ development workflow with C/C++ Auto Pair. This extension automates the creation of matching header and source files.",
+    "version": "1.0.1",
+    "engines": {
+        "vscode": "^1.98.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [],
+    "main": "./dist/extension.js",
+    "contributes": {
+        "configuration": [
+            {
+                "title": "C/C++ Auto Pair Settings",
+                "properties": {
+                    "c-cpp-auto-pair.headerGuardType": {
+                        "type": "string",
+                        "default": "ifndef",
+                        "enum": [
+                            "ifndef",
+                            "pragma_once"
+                        ],
+                        "description": "Choose the type of header guard: `#ifndef` or `#pragma once`."
+                    },
+                    "c-cpp-auto-pair.defaultIncludeFolder": {
+                        "type": "string",
+                        "default": "include",
+                        "description": "Relative path to the default folder where header files are placed."
+                    },
+                    "c-cpp-auto-pair.defaultSrcFolder": {
+                        "type": "string",
+                        "default": "src",
+                        "description": "Relative path to the default folder where source files are placed."
+                    },
+                    "c-cpp-auto-pair.useManualFolderSelection": {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Enable this to manually select the folder for headers and cpp files, instead of using the default include and src folders."
+                    },
+                    "c-cpp-auto-pair.sourceFileExtensions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "default": [
+                            ".c",
+                            ".cpp",
+                            ".cc",
+                            ".cxx"
+                        ],
+                        "description": "List of valid extensions for source files."
+                    },
+                    "c-cpp-auto-pair.headerFileExtensions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "default": [
+                            ".h",
+                            ".hpp",
+                            ".hxx",
+                            ".h++"
+                        ],
+                        "description": "List of valid extensions for header files."
+                    }
+                }
+            }
+        ],
+        "commands": [
+            {
+                "command": "c-cpp-auto-pair.createPairFiles",
+                "title": "Create C/C++ Pair Files"
+            },
+            {
+                "command": "c-cpp-auto-pair.renamePairFiles",
+                "title": "Rename C/C++ Pair Files"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run package",
+        "compile": "npm run check-types && npm run lint && node esbuild.js",
+        "watch": "npm-run-all -p watch:*",
+        "watch:esbuild": "node esbuild.js --watch",
+        "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+        "package": "npm run check-types && npm run lint && node esbuild.js --production",
+        "compile-tests": "tsc -p . --outDir out",
+        "watch-tests": "tsc -p . -w --outDir out",
+        "pretest": "npm run compile-tests && npm run compile && npm run lint",
+        "check-types": "tsc --noEmit",
+        "lint": "eslint src",
+        "test": "vscode-test"
+    },
+    "devDependencies": {
+        "@types/mocha": "^10.0.10",
+        "@types/node": "20.x",
+        "@types/vscode": "^1.98.0",
+        "@typescript-eslint/eslint-plugin": "^8.28.0",
+        "@typescript-eslint/parser": "^8.28.0",
+        "@vscode/test-cli": "^0.0.10",
+        "@vscode/test-electron": "^2.4.1",
+        "esbuild": "^0.25.2",
+        "eslint": "^9.23.0",
+        "npm-run-all": "^4.1.5",
+        "typescript": "^5.8.2"
+    }
+}
