@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2025-04-03
+### Fixed
+- Fixed an issue where `updateIncludeDirective()` incorrectly modified unrelated `#include` directives.
+- Resolved a bug where `updateHeaderGuard()` replaced unintended macros.
+- Improved regular expressions to correctly update `#ifndef`, `#define`, `#endif` comments, and `#include` directives.
+
+### Removed
+- Removed support for the `.h++` file extension due to compatibility and maintenance concerns.
+
 ## [1.1.0] - 2025-04-03
 ### Added
 - Implemented automatic detection of header file extensions when renaming pair files.

@@ -23,7 +23,6 @@ export function activate(context: vscode.ExtensionContext) {
             '.h',
             '.hpp',
             '.hxx',
-            '.h++',
         ]),
         sourceFileExtensions: config.get<string[]>('sourceFileExtensions', [
             '.c',
@@ -239,6 +238,8 @@ async function updateHeaderGuard(filePath: string, newBaseName: string) {
 
     // Extract file extension from `filePath`
     const fileExt = path.extname(filePath);
+    const fileExtNoDot = fileExt.slice(1).toUpperCase(); // Remove dot & convert to uppercase
+    const fileExtSanitized = fileExtNoDot.replace(/\+\+$/, '')
 
     // Validate if this is a header file
     if (!configValues.headerFileExtensions.includes(fileExt)) {
@@ -246,14 +247,17 @@ async function updateHeaderGuard(filePath: string, newBaseName: string) {
         return;
     }
 
-    // Generate header guard name (sanitize base name and use extension)
-    const sanitizedBaseName = newBaseName.replace(/[^a-zA-Z0-9_]/g, '_').toUpperCase();
-    const guardName = `${sanitizedBaseName}${fileExt.replace('.', '_').toUpperCase()}_`;
+    // Extract the old base name (file name without extension)
+    const oldBaseName = path.parse(filePath).name.toUpperCase().replace(/[^A-Z0-9_]/g, '_');
 
-    // Replace old header guards
+    // Generate the new header guard name
+    const newGuardName = `${newBaseName.replace(/[^a-zA-Z0-9_]/g, '_').toUpperCase()}_${fileExtSanitized}_`;
+
+    // Replace only the correct old header guard (not other macros)
     const newContent = content
-        .replace(/#ifndef\s+[A-Z0-9_]+/g, `#ifndef ${guardName}`)
-        .replace(/#define\s+[A-Z0-9_]+/g, `#define ${guardName}`);
+        .replace(new RegExp(`#ifndef\\s+${oldBaseName}_[A-Z0-9_]+`, "g"), `#ifndef ${newGuardName}`)
+        .replace(new RegExp(`#define\\s+${oldBaseName}_[A-Z0-9_]+`, "g"), `#define ${newGuardName}`)
+        .replace(new RegExp(`#endif\\s+//\\s+${oldBaseName}_[A-Z0-9_]+`, "g"), `#endif // ${newGuardName}`);
 
     await fs.writeFile(filePath, newContent, 'utf8');
 }
@@ -271,16 +275,18 @@ async function updateIncludeDirective(cppFilePath: string, headerFilePath: strin
 
         const content = await fs.readFile(cppFilePath, 'utf8');
 
-        // Extract the extension dynamically from the actual header file
+        // Extract old header file name and extension
+        const oldHeaderBase = path.parse(headerFilePath).name;
         const headerExt = path.extname(headerFilePath);
+
         if (!headerExt) {
             throw new Error(`Could not determine header file extension: ${headerFilePath}`);
         }
 
         const newInclude = `#include "${newBaseName}${headerExt}"`;
 
-        // Replace any existing #include directive with the correct extension
-        const newContent = content.replace(/#include\s+"[\w-]+\.[a-zA-Z0-9]+"/g, newInclude);
+        // Replace only the include directive for the old header file
+        const newContent = content.replace(new RegExp(`#include\\s+"${oldHeaderBase}\\${headerExt}"`, "g"), newInclude);
 
         await fs.writeFile(cppFilePath, newContent, 'utf8');
     } catch (error) {
@@ -310,7 +316,7 @@ async function getAllDirs(dirPath: string): Promise<string[]> {
 
 // Function to create a header file with a header guard
 async function createHeaderFile(filePath: string, cppFilePath: string, baseName: string) {
-    const headerGuard = generateHeaderGuard(baseName);
+    const headerGuard = generateHeaderGuard(baseName, filePath);
     await createFile(filePath, headerGuard, "Header file");
 }
 
@@ -323,12 +329,21 @@ async function createCppFile(filePath: string, headerFilePath: string, baseName:
 }
 
 // Function to generate a header guard based on user settings
-function generateHeaderGuard(baseName: string): string {
+function generateHeaderGuard(baseName: string, filePath: string): string {
+    let fileExt = path.extname(filePath);
+
+    // Validate if this is a header file
+    if (!configValues.headerFileExtensions.includes(fileExt)) {
+        vscode.window.showWarningMessage(`Skipped generating header gaurd. ${filePath} is not a recognized header file.`);
+        return '';
+    }
+
     if (configValues.headerGuardType === 'pragma_once') {
         return `#pragma once\n\n// Your header content goes here\n`;
     } else {
         const sanitizedBaseName = baseName.replace(/[^a-zA-Z0-9_]/g, '_').toUpperCase();
-        return `#ifndef ${sanitizedBaseName}_H_\n#define ${sanitizedBaseName}_H_\n\n// Your header content goes here\n\n#endif // ${sanitizedBaseName}_H_\n`;
+        const sanitizedFileExt = fileExt.slice(1).toUpperCase();
+        return `#ifndef ${sanitizedBaseName}_${sanitizedFileExt}_\n#define ${sanitizedBaseName}_${sanitizedFileExt}_\n\n// Your header content goes here\n\n#endif // ${sanitizedBaseName}_${sanitizedFileExt}_\n`;
     }
 }
 
