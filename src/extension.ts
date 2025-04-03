@@ -305,7 +305,6 @@ async function getAllDirs(dirPath: string): Promise<string[]> {
             if (entry.isDirectory() && !/node_modules|\.git|\.vscode|dist|build/.test(entry.name)) {
                 const fullPath = path.join(dirPath, entry.name);
                 dirs.push(fullPath);
-                dirs = dirs.concat(await getAllDirs(fullPath)); // Recursively add subdirectories
             }
         }
     } catch (error) {

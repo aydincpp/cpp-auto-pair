@@ -8,7 +8,7 @@
     },
     "icon": "media/logo.png",
     "description": "Streamline your C and C++ development workflow with C/C++ Auto Pair. This extension automates the creation of matching header and source files.",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "engines": {
         "vscode": "^1.98.0"
     },

@@ -62,7 +62,7 @@ Users can configure settings in VS Code (`settings.json`):
 | `c-cpp-auto-pair.defaultIncludeFolder` | Default folder for header files | `include` |
 | `c-cpp-auto-pair.defaultSrcFolder` | Default folder for source files | `src` |
 | `c-cpp-auto-pair.useManualFolderSelection` | Ask user for folder selection when creating files | `false` |
-| `c-cpp-auto-pair.headerFileExtensions` | Available header file extensions | `[".h", ".hpp", ".hxx", ".h++"]` |
+| `c-cpp-auto-pair.headerFileExtensions` | Available header file extensions | `[".h", ".hpp", ".hxx"]` |
 | `c-cpp-auto-pair.sourceFileExtensions` | Available source file extensions | `[".c", ".cpp", ".cc", ".cxx"]` |
 | `c-cpp-auto-pair.headerGuardType` | Header guard type (`ifndef` or `pragma_once`) | `ifndef` |
 
