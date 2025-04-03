@@ -20,13 +20,13 @@ C/C++ Auto Pair is a Visual Studio Code extension that simplifies managing C and
 7. Files will be created with appropriate header guards and `#include` directives.
 
 ### Creating Pair Files (`c-cpp-auto-pair.useManualFolderSelection: false`)
-![Create Pair Files Auto](media/create_pair_files_auto.gif)
+![Create Pair Files Auto](https://raw.githubusercontent.com/aydincpp/cpp-auto-pair/refs/heads/main/media/create_pair_files_auto.gif)
 
 ### Creating Pair Files (`c-cpp-auto-pair.useManualFolderSelection: true`)
-![Create Pair Files Auto](media/create_pair_files_manual.gif)
+![Create Pair Files Auto](https://raw.githubusercontent.com/aydincpp/cpp-auto-pair/refs/heads/main/media/create_pair_files_manual.gif)
 
 ### Renaming Pair Files
-![Rename Pair Files](media/rename_pair_files.gif)
+![Rename Pair Files](https://raw.githubusercontent.com/aydincpp/cpp-auto-pair/refs/heads/main/media/rename_pair_files.gif)
 
 1. Open one of the pair files in the editor.
 2. Open the Command Palette and run `Rename C/C++ Pair Files`.
